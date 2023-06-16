@@ -1,0 +1,24 @@
+import random
+import re
+Group = ["Goblins", "Lizardfolk", "Centaurs", "Kobolds", "Bugbears", "Hobgoblins", "Firborgs", "Fey", "Goliats", "Minotaurs", 
+         "Owlbears", "Trolls", "Chimera", "Gnolls", "Vampires"]
+Attitude = ["friendly", "cautious", "indifferent", "hostile", "threatening"]
+Need_Want = ["Food", "Mate", "Shiny things", "Slaves", "Territory", "Home", "Religious sacrifice", "status/trophies", "kicks/fun"]
+Complication = ["Secretive", "Monster", "Monster", "Monster", "Monster", "Wounded", "Insane", "Controlled", "Supernatural", 
+                "Trapped", "Frenzied", "with children", "Pregnant", "with prisoner", "with treasure", "Diseased", "Running", 
+                "Hiding", "Lost"]
+
+
+# This generates the num number of encounter promts, if the encounter complication is a 
+# monster it selects a monster from the table and a attitude aswell.
+num = 20
+for _ in range(num):
+    complication = random.choice(Complication)
+    if complication == "Monster":
+        complication = random.choice(Attitude), random.choice(Group)
+    encounter = "There are ", random.choice(Group), " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, "."
+
+
+    encounter = ''.join([str(element) for element in encounter])
+    encounter = re.sub(r"[-()\"#/@;:<>{}=~|.?]", "", encounter)
+    print(encounter)
