@@ -16,7 +16,7 @@ for _ in range(num):
     complication = random.choice(Complication)
     if complication == "Monster":
         complication = random.choice(Attitude), random.choice(Group)
-    encounter = "There are ", random.choice(Group), " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, "."
+    encounter = "There are ", random.choice(Group), " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but there are ", complication, "."
 
 
     encounter = ''.join([str(element) for element in encounter])
