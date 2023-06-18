@@ -1,7 +1,13 @@
-__author__ = 'Zachary Hill'
+# taken from: Zachary Hill
+
 # Monsters by CR
 # 'Monster Name': [Monster Manual Page, 'Challenge Rating number', Experience Points, Size, Type]
 # 'Key'         :       [0],                       [1],                      [2]      [3]   [4]
+
+# Add an aditional key for the biome the creature exist in, maybe several? a tuple: 
+# { keyName1 : value1, keyName2: value2, keyName3: [val1, val2, val3] } 
+# This would allow us to have biomes in the lookup and not have different lists for each
+
 cr_dict = {
     # CR 0 is 10 XP
     'Awakened shrub': [317, '0', 10, 'Small', 'Plant'],

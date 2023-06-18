@@ -20,5 +20,5 @@ for _ in range(num):
 
 
     encounter = ''.join([str(element) for element in encounter])
-    encounter = re.sub(r"[-()\"#/@;:<>{}=~|.?]", "", encounter)
+    encounter = re.sub(r"[-()\"#/@;:'<>{}=~|.?]", "", encounter)
     print(encounter)
