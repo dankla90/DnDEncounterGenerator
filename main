@@ -152,9 +152,11 @@ def start():
             output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
             output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
             monster = ('{0}x {1}(s) found on Monster Manual page: {2}'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))    
-            if complication == "Monster":  
-                monster = ('{0}x {1}(s) found on Monster Manual page: {2}'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))    
-                complication = random.choice(Attitude), monster   
+            if complication == "Monster":
+                output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
+                output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)   
+                monster2 = ('{0}x {1}(s) found on Monster Manual page: {2}'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))    
+                complication = random.choice(Attitude), monster2   
                 encounter = "There are ", monster, " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, "."
                 encounter = ''.join([str(element) for element in encounter])
                 encounter = re.sub(r"[-()\"#@;:'<>{}=~|.?]", "", encounter)
@@ -164,7 +166,6 @@ def start():
                 encounter = ''.join([str(element) for element in encounter])
                 encounter = re.sub(r"[-()\"#@;:'<>{}=~|.?]", "", encounter)
                 print(encounter)
-        
         script_repeat = get_user_input_str('Run again? Y/N\n[Y]> ', default_choice='y', choices=['y', 'yes', 'n', 'no'])
 
 
