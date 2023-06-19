@@ -6,17 +6,20 @@ from bisect import bisect_left
 
 monsters_dict = {}
 
-# replace this with the monster algo
+# This has been replaced with the encounter generation
 Group = ["Goblins", "Lizardfolk", "Centaurs", "Kobolds", "Bugbears", "Hobgoblins", "Firborgs", "Fey", "Goliats", "Minotaurs", 
          "Owlbears", "Trolls", "Chimera", "Gnolls", "Vampires"]
 
-
+# These are the base for the semantic part of the encounter generator, increase the number of "Monster" for more encounters
 Attitude = ["friendly", "cautious", "indifferent", "hostile", "threatening"]
 Need_Want = ["Food", "Mate", "Shiny things", "Slaves", "Territory", "Home", "Religious sacrifice", "status/trophies", "kicks/fun"]
 Complication = ["Secretive", "Monster", "Monster", "Monster", "Monster", "Wounded", "Insane", "Controlled", "Supernatural", 
                 "Trapped", "Frenzied", "with children", "Pregnant", "with prisoner", "with treasure", "Diseased", "Running", 
                 "Hiding", "Lost"]
-Complication = ["Monster"]
+# Use this for only monster vs monster encounters: 
+# Complication = ["Monster"]
+
+
 
 
 class Monster:
@@ -28,8 +31,6 @@ class Monster:
         self.xp = xp
         self.size = size
         self.monster_type = monster_type
-
-
 
     
 def xp_budget(party_size, party_level, difficulty):
@@ -131,7 +132,14 @@ def get_user_input_vars():
     return party_size_input, party_level_input, difficulty_input, monster_type, number_of_encounters_input
 
 
-
+## This creates a new encounter each time it is run based on the imput from the user
+def encounter_generator(current_encounter):
+    encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
+    xp_per_monster = xp_list_gen(encounter_xp)                    
+    output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
+    output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
+    monster = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))     
+    return monster
 
 
 # This generates the num number of encounter promts, if the encounter complication is a 
@@ -150,20 +158,11 @@ def start():
             complication = random.choice(Complication)
             if complication == "Monster":
                 ## This creates two monster encounters since the complication is monster
-                
                 ## This is the first encounter
-                encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
-                xp_per_monster = xp_list_gen(encounter_xp)                    
-                output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
-                output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
-                monster = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))    
+                monster = encounter_generator(current_encounter)
                 
                 ## This is the second encounter
-                encounter_xp2 = xp_budget(current_encounter2[0], current_encounter2[1], current_encounter2[2])
-                xp_per_monster2 = xp_list_gen(encounter_xp2)                 
-                output_monster2 = rnd_select_monster(xp_per_monster2, current_encounter2[3], monsters_dict)
-                output_encounter2 = build_encounter_size(current_encounter2[0], monsters_dict[output_monster2].xp, encounter_xp2)   
-                monster2 = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter2, output_monster2, monsters_dict[output_monster2].manpage))    
+                monster2 = encounter_generator(current_encounter)
                 complication = random.choice(Attitude), monster2  
                 
                 ## This prints the encounter
@@ -174,11 +173,7 @@ def start():
                           
             else:  
                 ## This creates the encounter if there is no monster complication
-                encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
-                xp_per_monster = xp_list_gen(encounter_xp)        
-                output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
-                output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
-                monster = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))      
+                monster = encounter_generator(current_encounter)
                 encounter = "There are ", monster, " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, ".", '\n'
                 encounter = ''.join([str(element) for element in encounter])
                 encounter = re.sub(r"[-\"#@;():'<>{}=~|.?]", "", encounter)
@@ -187,13 +182,13 @@ def start():
 
 
 
-
+#initialized the program
 def main():
     for key in monsters.cr_dict:
         monsters_dict[key] = Monster(key, *monsters.cr_dict[key])
         
     start()
 
-
+# runs the script
 if __name__ == '__main__':
     main()
