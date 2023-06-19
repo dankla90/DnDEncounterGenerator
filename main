@@ -16,6 +16,8 @@ Need_Want = ["Food", "Mate", "Shiny things", "Slaves", "Territory", "Home", "Rel
 Complication = ["Secretive", "Monster", "Monster", "Monster", "Monster", "Wounded", "Insane", "Controlled", "Supernatural", 
                 "Trapped", "Frenzied", "with children", "Pregnant", "with prisoner", "with treasure", "Diseased", "Running", 
                 "Hiding", "Lost"]
+Complication = ["Monster"]
+
 
 class Monster:
     """Class used to rename values in the monsters.cr_dict dictionary."""
@@ -78,8 +80,8 @@ def list_monster_xp(input_monster_dict, xp):
 
 def build_encounter_size(party_size, monster_xp, xp):
     """Function returns number of monsters in encounter based on previous function outputs.
-    The number of monsters depends upon the party size, and xp budget.
-    """
+    The number of monsters depends upon the party size, and xp budget."""
+    
     monster_count = [1, 2, 6, 10, 14]
     encounter_multiplier = [1.0, 0.67, 0.50, 0.40, 0.33, 0.25]
     num_monsters = xp // monster_xp
@@ -87,8 +89,8 @@ def build_encounter_size(party_size, monster_xp, xp):
     index_table = bisect_left(monster_count, num_monsters)
     if party_size <= 2 and index_table != len(encounter_multiplier) - 1:
         index_table += 1
-    if num_monsters == 1:
-        return num_monsters
+    #if num_monsters == 1:
+    #    return num_monsters
     return int(num_monsters * encounter_multiplier[index_table])  # number, xp value
 
 
@@ -137,11 +139,8 @@ def get_user_input_vars():
 def start():
     current_encounter = get_user_input_vars()
     script_repeat = 'y'
-    """Define run variables to output data."""
-    encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
-    xp_per_monster = xp_list_gen(encounter_xp)
     num = current_encounter[4]
-
+    current_encounter2 = current_encounter
 # This takes the number of encounters selected and runs the party size and level and seeks a suitable encounter.
 
     while script_repeat == 'y' or script_repeat == 'yes':
@@ -149,32 +148,42 @@ def start():
               current_encounter[1], current_encounter[2], current_encounter[4]))        
         for _ in range(num):
             complication = random.choice(Complication)
-            output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
-            output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
-            monster = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))    
             if complication == "Monster":
+                ## This creates two monster encounters since the complication is monster
+                
+                ## This is the first encounter
+                encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
+                xp_per_monster = xp_list_gen(encounter_xp)                    
                 output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
-                output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)   
-                monster2 = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))    
+                output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
+                monster = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))    
+                
+                ## This is the second encounter
+                encounter_xp2 = xp_budget(current_encounter2[0], current_encounter2[1], current_encounter2[2])
+                xp_per_monster2 = xp_list_gen(encounter_xp2)                 
+                output_monster2 = rnd_select_monster(xp_per_monster2, current_encounter2[3], monsters_dict)
+                output_encounter2 = build_encounter_size(current_encounter2[0], monsters_dict[output_monster2].xp, encounter_xp2)   
+                monster2 = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter2, output_monster2, monsters_dict[output_monster2].manpage))    
                 complication = random.choice(Attitude), monster2  
-                encounter = "There are ", monster, " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, ".", '\n'
+                
+                ## This prints the encounter
+                encounter = "There are ", monster, " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but there are ", complication, ".", '\n'
                 encounter = ''.join([str(element) for element in encounter])
                 encounter = re.sub(r"[-\"#@;():'<>{}=~|.?]", "", encounter)
-                print(encounter)             
-            else:    
+                print(encounter)   
+                          
+            else:  
+                ## This creates the encounter if there is no monster complication
+                encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
+                xp_per_monster = xp_list_gen(encounter_xp)        
+                output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
+                output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
+                monster = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))      
                 encounter = "There are ", monster, " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, ".", '\n'
                 encounter = ''.join([str(element) for element in encounter])
                 encounter = re.sub(r"[-\"#@;():'<>{}=~|.?]", "", encounter)
                 print(encounter)
         script_repeat = get_user_input_str('Run again? Y/N\n[Y]> ', default_choice='y', choices=['y', 'yes', 'n', 'no'])
-
-
-
-
-
-
-
-
 
 
 
