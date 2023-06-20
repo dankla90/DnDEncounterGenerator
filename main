@@ -148,9 +148,8 @@ def start():
     current_encounter = get_user_input_vars()
     script_repeat = 'y'
     num = current_encounter[4]
-    current_encounter2 = current_encounter
+    
 # This takes the number of encounters selected and runs the party size and level and seeks a suitable encounter.
-
     while script_repeat == 'y' or script_repeat == 'yes':
         print('Randomized encounter based on:\nParty Size: {0}\nParty Level: {1}\nDifficulty: {2} \nNumber of encounters: {3}'.format(current_encounter[0], 
               current_encounter[1], current_encounter[2], current_encounter[4]))        
@@ -179,8 +178,7 @@ def start():
                 encounter = re.sub(r"[-\"#@;():'<>{}=~|.?]", "", encounter)
                 print(encounter)
         script_repeat = get_user_input_str('Run again? Y/N\n[Y]> ', default_choice='y', choices=['y', 'yes', 'n', 'no'])
-
-
+        
 
 #initialized the program
 def main():
