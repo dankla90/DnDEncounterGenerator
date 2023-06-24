@@ -52,29 +52,89 @@ def xp_list_gen(xp):
     return random_gen_factor
 
 
-def rnd_select_monster(xp, monster_type, input_monster_dict):
+def rnd_select_monster2(xp, monster_type, input_monster_dict, enviroment_input):
     """Function to return a randomly selected monster for an encounter that have the XP nearest the xp
     value input without going over. First checks to see if monster_type filter is set or not then
     pulls random monster from the monsters_dict dictionary.
     """
-    if monster_type == 'all':
-        nearest_monster_xp = min(list_monster_xp(input_monster_dict, xp), key=lambda x: abs(x - xp))
-        monster_selections = [key for key in input_monster_dict if input_monster_dict[key].xp == nearest_monster_xp]
-        output_monster = random.choice(monster_selections)
-        return output_monster
+    # This first one is just if no enviroment is chosen then it checks if a monster type is selected.
+    if enviroment_input == 'all':
+        if monster_type == 'all':
+            nearest_monster_xp = min(list_monster_xp(input_monster_dict, xp), key=lambda x: abs(x - xp))
+            monster_selections = [key for key in input_monster_dict if input_monster_dict[key].xp == nearest_monster_xp]
+            output_monster = random.choice(monster_selections)
+            return output_monster
+        else:
+            monster_type_dict = {key for key in input_monster_dict if input_monster_dict[key].monster_type == monster_type.capitalize()}
+            nearest_monster_xp = min([input_monster_dict[key].xp for key in monster_type_dict if input_monster_dict[key].xp <= xp], key=lambda x: abs(x - xp))
+            monster_selections = [key for key in monster_type_dict if input_monster_dict[key].xp == nearest_monster_xp and input_monster_dict[key].monster_type == monster_type.capitalize()]
+            output_monster = random.choice(monster_selections)
+            return output_monster
+    # This is if the enviroment is not all, and also if the monster type is selected. 
     else:
-        monster_type_dict = {key for key in input_monster_dict if input_monster_dict[key].monster_type == monster_type.capitalize()}
-        nearest_monster_xp = min([input_monster_dict[key].xp for key in monster_type_dict if input_monster_dict[key].xp <= xp], key=lambda x: abs(x - xp))
-        monster_selections = [key for key in monster_type_dict if input_monster_dict[key].xp == nearest_monster_xp and input_monster_dict[key].monster_type == monster_type.capitalize()]
-        output_monster = random.choice(monster_selections)
-        return output_monster
+        if monster_type == 'all':
+            nearest_monster_xp = min(list_monster_xp(input_monster_dict, xp), key=lambda x: abs(x - xp))
+            monster_selections = [key for key in input_monster_dict if input_monster_dict[key].xp == nearest_monster_xp]
+            enviroment_type_dict = {key for key in input_monster_dict if input_monster_dict[key].enviroment_input == enviroment_input.capitalize()}
+            common_elements = set(monster_selections) & enviroment_type_dict
+            output_monster = random.choice(common_elements)
+            return output_monster
+        else:
+            enviroment_type_dict = {key for key in input_monster_dict if input_monster_dict[key].enviroment_input == enviroment_input.capitalize()}
+            nearest_monster_xp = min([input_monster_dict[key].xp for key in enviroment_type_dict if input_monster_dict[key].xp <= xp], key=lambda x: abs(x - xp))
+            monster_selections = [key for key in enviroment_type_dict if input_monster_dict[key].xp == nearest_monster_xp and input_monster_dict[key].monster_type == monster_type.capitalize()]
+            common_elements = set(monster_selections) & enviroment_type_dict
+            output_monster = random.choice(common_elements)
+            return output_monster
+
+import random
+
+def rnd_select_monster(xp, monster_type, input_monster_dict, environment_input):
+    if environment_input == 'all':
+        if monster_type == 'all':
+            nearest_monster_xp = min(list_monster_xp(input_monster_dict, xp), key=lambda x: abs(x - xp))
+            monster_selections = [key for key, data in input_monster_dict.items() if data['xp'] == nearest_monster_xp]
+            if not monster_selections:
+                return None  # No monster found
+            output_monster = random.choice(list(monster_selections))
+            return output_monster
+        else:
+            monster_type_dict = {key: data for key, data in input_monster_dict.items() if data['monster_type'] == monster_type.capitalize()}
+            nearest_monster_xp = min([data['xp'] for key, data in monster_type_dict.items() if data['xp'] <= xp], key=lambda x: abs(x - xp))
+            monster_selections = [key for key, data in monster_type_dict.items() if data['xp'] == nearest_monster_xp and data['monster_type'] == monster_type.capitalize()]
+            if not monster_selections:
+                return None  # No monster found
+            output_monster = random.choice(list(monster_selections))
+            return output_monster
+    else:
+        if monster_type == 'all':
+            nearest_monster_xp = min(list_monster_xp(input_monster_dict, xp), key=lambda x: abs(x - xp))
+            monster_selections = [key for key, data in input_monster_dict.items() if data['xp'] == nearest_monster_xp]
+            environment_type_dict = {key: data for key, data in input_monster_dict.items() if environment_input.capitalize() in data['environment']}
+            common_elements = set(monster_selections) & set(environment_type_dict.keys())
+            if not common_elements:
+                return None  # No monster found
+            output_monster = random.choice(list(common_elements))
+            return output_monster
+        else:
+            environment_type_dict = {key: data for key, data in input_monster_dict.items() if environment_input.capitalize() in data['environment'] and data['monster_type'] == monster_type.capitalize()}
+            nearest_monster_xp = min([data['xp'] for key, data in environment_type_dict.items() if data['xp'] <= xp], key=lambda x: abs(x - xp))
+            monster_selections = [key for key, data in environment_type_dict.items() if data['xp'] == nearest_monster_xp and data['monster_type'] == monster_type.capitalize()]
+            common_elements = set(monster_selections) & set(environment_type_dict.keys())
+            if not common_elements:
+                return None  # No monster found
+            output_monster = random.choice(list(common_elements))
+            return output_monster
+
+
 
 
 def list_monster_xp(input_monster_dict, xp):
     monster_xp_list = []
     for key in input_monster_dict:
-        if input_monster_dict[key].xp <= xp:
-            monster_xp_list.append(input_monster_dict[key].xp)
+        monster_data = input_monster_dict[key]
+        if monster_data['xp'] <= xp:
+            monster_xp_list.append(monster_data['xp'])
     return monster_xp_list
 
 
@@ -128,16 +188,25 @@ def get_user_input_vars():
                                           default_choice='medium', choices=['easy', 'medium', 'hard', 'deadly'])
     monster_type = get_user_input_str("Select monster type:'?' [All]> ", default_choice='all', choices=encounter_tables.monster_types_list)
     number_of_encounters_input = get_user_input_int('number of encounters?')
-    return party_size_input, party_level_input, difficulty_input, monster_type, number_of_encounters_input
+    enviroment_input = get_user_input_str("Select enviroment type:'?' [All]> ", default_choice='all', choices=encounter_tables.environment_list)
+    return party_size_input, party_level_input, difficulty_input, monster_type, number_of_encounters_input, enviroment_input
 
 
 ## This creates a new encounter each time it is run based on the imput from the user
+def encounter_generator2(current_encounter):
+    encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
+    xp_per_monster = xp_list_gen(encounter_xp)                    
+    output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monster_data, current_encounter[5])
+    output_encounter = build_encounter_size(current_encounter[0], monster_data[output_monster].xp, encounter_xp)    
+    monster = ('{0} {1}(s) [Source: {2}]'.format(output_encounter, output_monster, monster_data[output_monster].source))     
+    return monster
+
 def encounter_generator(current_encounter):
     encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
     xp_per_monster = xp_list_gen(encounter_xp)                    
-    output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
-    output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
-    monster = ('{0} {1}(s) [found on Monster Manual page: {2}]'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))     
+    output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monster_data, current_encounter[5])
+    output_encounter = build_encounter_size(current_encounter[0], monster_data[output_monster]['xp'], encounter_xp)    
+    monster = '{0} {1}(s) [Source: {2}]'.format(output_encounter, output_monster, monster_data[output_monster]['source'])     
     return monster
 
 
@@ -179,14 +248,11 @@ def start():
         script_repeat = get_user_input_str('Run again? Y/N\n[Y]> ', default_choice='y', choices=['y', 'yes', 'n', 'no'])
         
 
-
-
 #initialized the program
 def main():
     for key in monsters.cr_dict:
         monsters_dict[key] = Monster(key, *monsters.cr_dict[key])
         
-    
     # Populate the monster_data dictionary from cr_dict2
     for key, value in cr_dict2.items():
         name = key
@@ -213,7 +279,7 @@ def main():
             'source': source,
             'environment': environment_dict
         }
-    #start()
+    start()
 
 # runs the script
 if __name__ == '__main__':

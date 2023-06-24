@@ -1,7 +1,7 @@
 # Monsters by CR
 
-# 'Monster Name': [Size, Type, Alignment, 'Challenge Rating number', Experience Points, Monster Manual Page,]
-# 'Key'         :   [0], [1],       [2]             [3]                       [4]               [5]
+# 'Monster Name': [Size, Type, Alignment, 'Challenge Rating number', Experience Points, Monster Manual Page/source, [enviromentalkeys]]
+# 'Key'         :   [0], [1],       [2]             [3]                       [4]               [5]                         [6]-[18]
 
 
 # Add an aditional key for the biome the creature exist in, maybe several? a tuple: 

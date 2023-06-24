@@ -20,3 +20,7 @@ xp_difficulties = {
 # List of each monster type which are grouped in the monster.py dictionary.
 monster_types_list = ['all', 'aberration', 'beast', 'celestial', 'construct', 'dragon', 'elemental',
                       'fey', 'fiend', 'giant', 'humanoid', 'monstrosity', 'ooze', 'plant', 'undead']
+
+
+environment_list = ['all', 'arctic', 'coastal', 'desert', 'forest', 'grassland', 'hill', 'mountain',
+                    'swamp', 'underdark', 'underwater', 'urban', 'other Plane']
