@@ -3,7 +3,8 @@ import re
 import monsters
 import encounter_tables
 from bisect import bisect_left
-
+from monsternew import cr_dict2
+monster_data = {}
 monsters_dict = {}
 
 # This has been replaced with the encounter generation
@@ -19,9 +20,6 @@ Complication = ["Secretive", "Monster", "Monster", "Monster", "Monster", "Wounde
 # Use this for only monster vs monster encounters: 
 # Complication = ["Monster"]
 
-
-
-
 class Monster:
     """Class used to rename values in the monsters.cr_dict dictionary."""
     def __init__(self, name, manpage, cr, xp, size, monster_type):
@@ -32,7 +30,8 @@ class Monster:
         self.size = size
         self.monster_type = monster_type
 
-    
+  
+
 def xp_budget(party_size, party_level, difficulty):
     """Function which takes the party size, average party level, and desired difficulty to return the correct XP budget
     within the encounter_table dictionary.
@@ -180,12 +179,41 @@ def start():
         script_repeat = get_user_input_str('Run again? Y/N\n[Y]> ', default_choice='y', choices=['y', 'yes', 'n', 'no'])
         
 
+
+
 #initialized the program
 def main():
     for key in monsters.cr_dict:
         monsters_dict[key] = Monster(key, *monsters.cr_dict[key])
         
-    start()
+    
+    # Populate the monster_data dictionary from cr_dict2
+    for key, value in cr_dict2.items():
+        name = key
+        size = value[0]
+        monster_type = value[1]
+        alignment = value[2]
+        cr = value[3]
+        xp = value[4]
+        source = value[5]
+        environments = value[6]
+
+        environment_list = ['Arctic', 'Coastal', 'Desert', 'Forest', 'Grassland', 'Hill', 'Mountain',
+                            'Swamp', 'Underdark', 'Underwater', 'Urban', 'Other Plane']
+
+        environment_dict = {environment: (presence == 'x') for environment, presence in zip(environment_list, environments)}
+        
+        monster_data[name] = {
+            'name': name,
+            'size': size,
+            'monster_type': monster_type,
+            'alignment': alignment,
+            'cr': cr,
+            'xp': xp,
+            'source': source,
+            'environment': environment_dict
+        }
+    #start()
 
 # runs the script
 if __name__ == '__main__':
