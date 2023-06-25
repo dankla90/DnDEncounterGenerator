@@ -52,6 +52,7 @@ def xp_list_gen(xp):
         random_gen_factor = random.choice(xp_factors)
     return random_gen_factor
 
+
 def rnd_select_monster(xp, monster_type, input_monster_dict, environment_input):
     if environment_input == 'all':
         if monster_type == 'all':
@@ -124,6 +125,8 @@ def get_user_input_str(prompt, default_choice, choices=None):
         val = input(prompt).lower()
         if val is '':
             result = default_choice
+        elif val == 'help':
+            print('You need to select one of these {0}'.format(choices,))        
         elif choices and val not in choices:
             print(' Error: must choose one: {0}'.format(choices,))
         else:
@@ -138,20 +141,27 @@ def get_user_input_int(prompt):
         try:
             result = int(input(prompt))
         except ValueError:
-            print(' not an integer, try again...')
+            print(' not an integer, user numbers! ')
     return result
 
 
 def get_user_input_vars():
     """Function grabs user input and returns formatted output for encounter building.
     User input selection is: Prompt text, default option, list of choices."""
+    print('Type "help" to see what choices there are for a variable, the Default choice has a [Box] around it, leave the imput black to use the Default')
     party_size_input = get_user_input_int('Party size?> ')
     party_level_input = get_user_input_int('Party average level?> ')
-    difficulty_input = get_user_input_str('Select difficulty:\nEasy, [Medium], Hard, or Deadly> ',
-                                          default_choice='medium', choices=['easy', 'medium', 'hard', 'deadly'])
-    monster_type = get_user_input_str("Select monster type:'?' [All]> ", default_choice='all', choices=encounter_tables.monster_types_list)
-    number_of_encounters_input = get_user_input_int('number of encounters?')
-    enviroment_input = get_user_input_str("Select enviroment type:'?' [All]> ", default_choice='all', choices=encounter_tables.environment_list)
+    advanced_input =get_user_input_str('Would you like [simple] or advanced encounter generation?', default_choice='simple', choices=['simple', 'advanced'])
+    if advanced_input == ('advanced'):
+        difficulty_input = get_user_input_str('Select difficulty:\nEasy, [Medium], Hard, or Deadly> ', default_choice='medium', choices=['easy', 'medium', 'hard', 'deadly'])
+        monster_type = get_user_input_str("Select monster type:'?' [All]> ", default_choice='all', choices=encounter_tables.monster_types_list)
+        number_of_encounters_input = get_user_input_int('number of encounters?')
+        enviroment_input = get_user_input_str("Select enviroment type:'?' [All]> ", default_choice='all', choices=encounter_tables.environment_list)
+    else:
+        difficulty_input = ('medium')
+        monster_type = ('all')
+        number_of_encounters_input = get_user_input_int('number of encounters?')
+        enviroment_input = ('all')
     return party_size_input, party_level_input, difficulty_input, monster_type, number_of_encounters_input, enviroment_input
 
 
