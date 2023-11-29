@@ -4,10 +4,7 @@ import monsters
 import encounter_tables
 from bisect import bisect_left
 from monsters import cr_dict 
-
 monsters_dict = {}
-
-
 
 # This has been replaced with the encounter generation
 Group = ["Goblins", "Lizardfolk", "Centaurs", "Kobolds", "Bugbears", "Hobgoblins", "Firborgs", "Fey", "Goliats", "Minotaurs", 
@@ -202,3 +199,11 @@ def main():
 # runs the script
 if __name__ == '__main__':
     main()
+
+
+
+
+## Issues to adress:
+## The generator mostly makes 1-5 enemy encounters, sometimes 6, need to look over the generator to see if I can increase the spread
+## formating of the text output, and inclusion of total xp, xp per parymember, and also adjusted xp for referance in it's own line
+##  maybe with an option in the advanced section to include this. 
