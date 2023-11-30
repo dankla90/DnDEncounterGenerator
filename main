@@ -6,9 +6,15 @@ from bisect import bisect_left
 from monsters import cr_dict 
 monsters_dict = {}
 
-# This has been replaced with the encounter generation
-Group = ["Goblins", "Lizardfolk", "Centaurs", "Kobolds", "Bugbears", "Hobgoblins", "Firborgs", "Fey", "Goliats", "Minotaurs", 
-         "Owlbears", "Trolls", "Chimera", "Gnolls", "Vampires"]
+
+
+
+## Issues to adress:
+## The generator mostly makes 1-5 enemy encounters, sometimes 6, need to look over the generator to see if I can increase the spread
+## formating of the text output, and inclusion of total xp, xp per parymember, and also adjusted xp for referance in it's own line
+##  maybe with an option in the advanced section to include this. 
+
+
 
 # These are the base for the semantic part of the encounter generator, increase the number of "Monster" for more encounters
 Attitude = ["friendly", "cautious", "indifferent", "hostile", "threatening"]
@@ -19,7 +25,7 @@ Complication = ["Secretive", "Monster", "Monster", "Monster", "Monster", "Wounde
 # Use this for only monster vs monster encounters: 
 # Complication = ["Monster"]
 
-# this is not in use anymore keep for a little while
+
 class Monster:
     """Class used to rename values in the monsters.cr_dict dictionary."""
     def __init__(self, name, manpage, cr, xp, size, monster_type):
@@ -99,7 +105,7 @@ def get_user_input_str(prompt, default_choice, choices=None):
     result = None
     while result is None:
         val = input(prompt).lower()
-        if val is '':
+        if val == '':
             result = default_choice
         elif val == 'help':
             print('You need to select one of these {0}'.format(choices,))        
@@ -144,10 +150,11 @@ def get_user_input_vars():
 def encounter_generator(current_encounter):
     encounter_xp = xp_budget(current_encounter[0], current_encounter[1], current_encounter[2])
     xp_per_monster = xp_list_gen(encounter_xp)
-    print(xp_per_monster)    ##Test Purpose
     output_monster = rnd_select_monster(xp_per_monster, current_encounter[3], monsters_dict)
     output_encounter = build_encounter_size(current_encounter[0], monsters_dict[output_monster].xp, encounter_xp)    
-    monster = ( '{0} {1}(s) MM page:{2}'.format(output_encounter, output_monster, monsters_dict[output_monster].manpage))
+    total_xp = output_encounter * xp_per_monster
+    party_member_xp = (total_xp // current_encounter[0])
+    monster = ('{0} {1}'.format(output_encounter, output_monster), ('Monster Manual page: {0}, the individual monster xp is {1}, and the total xp is {2}, Each of the party members should get {3} xp for this encounter'.format(monsters_dict[output_monster].manpage, xp_per_monster, total_xp, party_member_xp)))
     return monster
 
 
@@ -171,10 +178,10 @@ def start():
                 
                 ## This is the second encounter
                 monster2 = encounter_generator(current_encounter)
-                complication = random.choice(Attitude), monster2  
+                complication = random.choice(Attitude), monster2[0]  
                 
                 ## This prints the encounter
-                encounter = "There are ", monster, " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but there are ", complication, ".", '\n'
+                encounter = "There are ", monster[0], " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but there are ", complication, ".", '\n' "The ", monster[0], " can be found in ", monster[1], '\n' "In addition the ", monster2[0], " can be found on ", monster2[1], '\n'
                 encounter = ''.join([str(element) for element in encounter])
                 encounter = re.sub(r"[-\"#@;():'<>{}=~|.?]", "", encounter)
                 print(encounter)   
@@ -182,7 +189,8 @@ def start():
             else:  
                 ## This creates the encounter if there is no monster complication
                 monster = encounter_generator(current_encounter)
-                encounter = "There are ", monster, " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, ".", '\n'
+                
+                encounter = "There are ", monster[0], " that are ", random.choice(Attitude), ", they seek ", random.choice(Need_Want), ", but they are ", complication, ".", '\n', "The ", monster[0], " can be found in ", monster[1], '\n'
                 encounter = ''.join([str(element) for element in encounter])
                 encounter = re.sub(r"[-\"#@;():'<>{}=~|.?]", "", encounter)
                 print(encounter)
@@ -199,11 +207,3 @@ def main():
 # runs the script
 if __name__ == '__main__':
     main()
-
-
-
-
-## Issues to adress:
-## The generator mostly makes 1-5 enemy encounters, sometimes 6, need to look over the generator to see if I can increase the spread
-## formating of the text output, and inclusion of total xp, xp per parymember, and also adjusted xp for referance in it's own line
-##  maybe with an option in the advanced section to include this. 

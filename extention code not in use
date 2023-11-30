@@ -1,6 +1,13 @@
 from monsternew import cr_dict2
 monster_data = {}
 
+
+# This has been replaced with the encounter generation
+Group = ["Goblins", "Lizardfolk", "Centaurs", "Kobolds", "Bugbears", "Hobgoblins", "Firborgs", "Fey", "Goliats", "Minotaurs", 
+         "Owlbears", "Trolls", "Chimera", "Gnolls", "Vampires"]
+
+
+
 def rnd_select_monster(xp, monster_type, input_monster_dict, environment_input):
     if environment_input == 'all':
         if monster_type == 'all':
